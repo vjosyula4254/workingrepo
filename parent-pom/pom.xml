@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.chandu.apigee.demo</groupId>
+    <artifactId>parent-pom-proxy</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Plugin Repository</name>
+            <url>http://repo1.maven.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+   
+    
+     
+     <profiles>
+        <!-- Apigee Edge UI Configuration -->
+    
+        <profile>
+            <id>apigee</id>
+            <properties>
+                
+            <org>sidgs</org>
+            <apigee.env>dev</apigee.env>
+            <apigee.profile>dev</apigee.profile>
+            <options>update</options>
+            <apigee.api.protocol>http</apigee.api.protocol>
+            <apigee.api.host>edge.sidgs.net</apigee.api.host>
+            <apigee.api.port>8080</apigee.api.port>
+            <apigee.apiversion>v1</apigee.apiversion>
+            <vhostProtocol>http</vhostProtocol>
+            <vhostDomainName>dev-api.apigee.net</vhostDomainName>
+            <vhostDomainPort>9002</vhostDomainPort>
+            <vhostEdgeName>gateway-api</vhostEdgeName>
+            <apigee.hosturl>${apigee.api.protocol}://${apigee.api.host}:${apigee.api.port}</apigee.hosturl>
+        <api.northbound.domain>${vhostProtocol}://${vhostDomainName}:${vhostDomainPort}</api.northbound.domain>
+            
+            <!-- Apigee Edge User Credentials -->
+            <apigee.org>${org}</apigee.org>
+            <apigee.username>${username}</apigee.username>
+            <apigee.password>${password}</apigee.password>
+            <apigee.options>${options}</apigee.options>
+
+            </properties>
+        <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources-step</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${basedir}/target/apiproxy</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>apiproxy</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.apigee.build-tools.enterprise4g</groupId>
+                <artifactId>apigee-edge-maven-plugin</artifactId>
+                <version>1.0.2</version>
+                <executions>
+                    <execution>
+                        <id>configure-bundle-step</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>deploy-bundle</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.apigee.edge.config</groupId>
+                <artifactId>apigee-config-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>create-config-cache</id>
+                        <phase>verify</phase>                        
+                        <goals>
+                            <goal>caches</goal>
+                        </goals>
+                    </execution>
+                    
+                    <execution>
+                        <id>create-config-targetserver</id>
+                        <phase>verify</phase>                        
+                        <goals>
+                            <goal>targetservers</goal>
+                        </goals>
+                   
+                    </execution>
+                    </executions>
+            </plugin>            
+
+        </plugins>
+    </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
+
+
+
+
+
+
+
